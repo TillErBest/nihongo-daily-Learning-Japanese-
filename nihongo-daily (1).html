@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nihongo Daily — Japanese Conversation Lab</title>
+<style>
+:root {
+  color-scheme: light dark;
+  --bg: light-dark(#f6f5f1, #141715);
+  --surface: light-dark(#ffffff, #202522);
+  --surface2: light-dark(#eeeee8, #292f2b);
+  --text: light-dark(#202621, #f2f4ef);
+  --muted: light-dark(#69736c, #a9b2ab);
+  --line: light-dark(#dedfd7, #3b433e);
+  --accent: light-dark(#2e6954, #a0d5b9);
+  --accentText: light-dark(#ffffff, #14281f);
+  --pink: light-dark(#f5e5e2, #402c2b);
+  --gold: light-dark(#f4ecd6, #3d3522);
+  --shadow: 0 8px 28px rgba(20,35,25,.06);
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+#app { min-height: 100vh; width: 100%; background-color: var(--bg); }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px clamp(16px,4vw,48px); border-bottom:1px solid var(--line); background:var(--surface); }
+.brand { display:flex; gap:12px; align-items:center; font-weight:800; letter-spacing:-.03em; font-size:18px; }
+.logo { width:38px;height:38px;display:grid;place-items:center;background:#dcece3;color:#245440;border-radius:12px;font-size:20px; }
+.top-right { display:flex; align-items:center; gap:12px; color:var(--muted); font-size:13px; }
+.streak { background:var(--gold); padding:7px 11px; border-radius:99px; color:var(--text); font-weight:700; }
+.layout { max-width:1200px; margin:auto; padding:28px clamp(16px,4vw,48px) 56px; display:grid; grid-template-columns:220px minmax(0,1fr); gap:28px; }
+.sidebar { display:flex; flex-direction:column; gap:7px; align-self:start; position:sticky; top:18px; }
+.navbtn { text-align:left; border:0; background:transparent; padding:12px 14px; border-radius:12px; color:var(--muted); font-weight:650; display:flex; align-items:center; gap:11px; }
+.navbtn.active,.navbtn:hover { background:var(--surface2); color:var(--text); }
+.navicon { width:23px; text-align:center; font-size:17px; }
+.side-note { margin-top:20px; padding:16px; background:var(--pink); border-radius:16px; font-size:13px; }
+.side-note strong { display:block; margin-bottom:5px; }
+main { min-width:0; }
+.eyebrow { text-transform:uppercase; font-size:11px; font-weight:800; letter-spacing:.13em; color:var(--accent); }
+h1 { font-size:clamp(27px,4vw,39px); letter-spacing:-.045em; line-height:1.13; margin:8px 0 10px; }
+h2 { letter-spacing:-.03em; font-size:22px; margin:0 0 10px; }
+h3 { font-size:16px; margin:0 0 6px; }
+p { margin:6px 0 12px; }
+.muted { color:var(--muted); }
+.hero { background:var(--surface); border:1px solid var(--line); border-radius:23px; padding:clamp(20px,4vw,34px); display:grid; grid-template-columns:minmax(0,1.3fr) minmax(160px,.7fr); gap:20px; box-shadow:var(--shadow); }
+.hero-art { align-self:stretch; min-height:150px; display:flex; flex-direction:column; justify-content:center; align-items:center; border-radius:18px; background:var(--surface2); text-align:center; padding:18px; }
+.hero-jp { font-size:42px; font-weight:750; line-height:1.2; }
+.hero-romaji { font-size:13px; color:var(--muted); margin-top:8px; }
+.btn { border:1px solid var(--line); border-radius:12px; padding:10px 15px; background:var(--surface); color:var(--text); font-weight:750; }
+.btn.primary { background:var(--accent); color:var(--accentText); border-color:transparent; }
+.btn:disabled { opacity:.4; cursor:not-allowed; }
+.btn.small { padding:7px 10px; font-size:13px; }
+.hero-actions { display:flex; gap:9px; flex-wrap:wrap; margin-top:19px; }
+.stats { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:16px 0 26px; }
+.stat { background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; }
+.stat .num { font-size:25px; font-weight:800; letter-spacing:-.04em; }
+.stat .label { color:var(--muted); font-size:12px; }
+.section-head { display:flex; align-items:end; justify-content:space-between; gap:10px; margin:26px 0 12px; }
+.cards { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.lesson-card { background:var(--surface); border:1px solid var(--line); border-radius:17px; padding:18px; display:flex; flex-direction:column; align-items:flex-start; min-height:175px; }
+.lesson-top { display:flex; justify-content:space-between; align-items:center; width:100%; gap:8px; margin-bottom:13px; }
+.pill { border-radius:99px; padding:4px 9px; background:var(--surface2); font-size:11px; color:var(--muted); font-weight:750; }
+.lesson-card p { color:var(--muted); font-size:13px; flex:1; }
+.lesson-card .btn { margin-top:8px; }
+.progress-track { height:7px; background:var(--surface2); border-radius:99px; overflow:hidden; margin-top:8px; }
+.progress-fill { height:100%; background:var(--accent); width:0; border-radius:99px; transition:width .25s; }
+.panel { background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:clamp(18px,3vw,28px); }
+.breadcrumb { display:flex; align-items:center; gap:8px; color:var(--muted); font-size:13px; margin-bottom:20px; }
+.jp-big { font-size:clamp(25px,4vw,34px); font-weight:800; letter-spacing:.02em; }
+.romaji { color:var(--muted); font-size:14px; margin-top:4px; }
+.meaning { font-size:18px; font-weight:700; margin-top:9px; }
+.example { margin-top:18px; background:var(--surface2); padding:17px; border-radius:14px; }
+.example .jp { font-size:21px; font-weight:750; }
+.example .en { color:var(--muted); margin-top:6px; }
+.lesson-controls { display:flex; justify-content:space-between; gap:10px; margin-top:20px; flex-wrap:wrap; }
+.flash-wrap { max-width:600px; margin:auto; }
+.flashcard { border:1px solid var(--line); background:var(--surface2); border-radius:22px; min-height:245px; padding:26px; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; cursor:pointer; }
+.flashcard .jp-big { font-size:43px; }
+.flashcard .tap { color:var(--muted); font-size:12px; margin-top:24px; }
+.flash-actions { display:flex; justify-content:center; gap:10px; margin-top:15px; flex-wrap:wrap; }
+.quiz-question { font-size:20px; font-weight:750; margin:18px 0; }
+.options { display:grid; gap:9px; }
+.option { width:100%; text-align:left; border:1px solid var(--line); background:var(--surface); padding:13px 15px; border-radius:12px; color:var(--text); }
+.option:hover { border-color:var(--accent); }
+.option.correct { border-color:#3b936b; background:light-dark(#e5f5ec,#20392c); }
+.option.wrong { border-color:#c66c60; background:var(--pink); }
+.feedback { margin-top:13px; font-weight:700; }
+.dialogue { display:flex; flex-direction:column; gap:12px; margin-top:16px; }
+.bubble { padding:13px 15px; border-radius:15px; max-width:86%; background:var(--surface2); }
+.bubble.you { align-self:flex-end; background:var(--pink); }
+.speaker { color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+.bubble .jp { font-size:20px; font-weight:750; }
+.bubble .rom { color:var(--muted); font-size:12px; }
+.bubble .translation { margin-top:5px; font-size:13px; }
+.reveal { margin-top:15px; padding:15px; border:1px dashed var(--line); border-radius:13px; }
+.day-list { display:grid; gap:10px; }
+.day { border:1px solid var(--line); border-radius:14px; padding:14px; background:var(--surface); display:grid; grid-template-columns:66px 1fr auto; gap:12px; align-items:center; }
+.day-num { font-weight:800; color:var(--accent); }
+.day small { display:block; color:var(--muted); }
+.check { accent-color:var(--accent); width:19px; height:19px; }
+.vocab-table { width:100%; border-collapse:collapse; }
+.vocab-table th,.vocab-table td { padding:12px 8px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; }
+.vocab-table th { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.08em; }
+.vocab-table td:first-child { font-weight:800; font-size:18px; }
+.search { width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:12px; background:var(--surface); color:var(--text); margin:10px 0 15px; }
+.hidden { display:none !important; }
+.footer-note { color:var(--muted); font-size:12px; margin-top:20px; }
+@media(max-width:760px) {
+ .layout { grid-template-columns:1fr; gap:20px; padding-top:18px; }
+ .sidebar { position:static; flex-direction:row; overflow-x:auto; padding-bottom:3px; }
+ .navbtn { white-space:nowrap; padding:10px 12px; }
+ .side-note { display:none; }
+ .hero { grid-template-columns:1fr; }
+ .hero-art { min-height:115px; }
+ .hero-jp { font-size:34px; }
+}
+@media(max-width:480px) {
+ .cards { grid-template-columns:1fr; }
+ .stats { gap:8px; }
+ .stat { padding:12px; }
+ .stat .num { font-size:21px; }
+ .top-right .top-subtitle { display:none; }
+ .day { grid-template-columns:48px 1fr auto; gap:7px; padding:11px; }
+ .vocab-table th:nth-child(3), .vocab-table td:nth-child(3) { display:none; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">日</div><div>Nihongo Daily<div class="muted" style="font-size:11px;font-weight:550;letter-spacing:0">Japanese Conversation Lab</div></div></div>
+    <div class="top-right"><span class="top-subtitle">Small steps, real conversations</span><span class="streak">🔥 <span id="streak">0</span> day streak</span></div>
+  </header>
+  <div class="layout">
+    <nav class="sidebar" aria-label="Main navigation">
+      <button class="navbtn active" data-view="home"><span class="navicon">⌂</span> Dashboard</button>
+      <button class="navbtn" data-view="lesson"><span class="navicon">▤</span> Today's lesson</button>
+      <button class="navbtn" data-view="flashcards"><span class="navicon">▧</span> Flashcards</button>
+      <button class="navbtn" data-view="quiz"><span class="navicon">✓</span> Quick quiz</button>
+      <button class="navbtn" data-view="conversation"><span class="navicon">☏</span> Conversation</button>
+      <button class="navbtn" data-view="plan"><span class="navicon">▦</span> 4-week plan</button>
+      <button class="navbtn" data-view="vocab"><span class="navicon">あ</span> Vocabulary</button>
+      <div class="side-note"><strong>今日のひとこと</strong><span class="jp-big" style="font-size:22px">だいじょうぶ</span><br><span class="muted">daijoubu · It's okay / I'm fine</span></div>
+    </nav>
+    <main id="main" aria-live="polite"></main>
+  </div>
+</div>
+<script>
+const lessons = [
+ {id:1,title:"Say hello naturally",tag:"Greetings",desc:"Greet people and ask how they're doing.",goal:"Start and end a simple conversation.",words:[
+  ["こんにちは","konnichiwa","hello / good afternoon","greeting"],
+  ["おはよう","ohayou","morning! (casual)","greeting"],
+  ["ありがとう","arigatou","thanks","expression"],
+  ["げんき","genki","well, energetic","な-adjective / noun"],
+  ["うん","un","yeah","casual response"],
+  ["ううん","uun","nope","casual response"]
+ ],grammar:"A natural casual check-in is 「げんき？」 (Genki? — You good?/How are you?). Friends often use this rather than a formal textbook phrase.",example:["げんき？","Genki?","How are you? / You good?"]},
+ {id:2,title:"Introduce yourself",tag:"First meetings",desc:"Say your name, where you're from, and ask someone theirs.",goal:"Give a short introduction.",words:[
+  ["わたし","watashi","I / me","pronoun"],
+  ["なまえ","namae","name","noun"],
+  ["ドイツ","Doitsu","Germany","proper noun"],
+  ["ノルウェー","Noruwee","Norway","proper noun"],
+  ["だいがくせい","daigakusei","university student","noun"],
+  ["よろしく","yoroshiku","nice to meet you / please treat me well","expression"]
+ ],grammar:"「わたしは X です」 means “I'm X.” In casual speech, people often drop わたしは when the subject is obvious.",example:["ドイツから きました。","Doitsu kara kimashita.","I'm from Germany."]},
+ {id:3,title:"Ask easy questions",tag:"Keep talking",desc:"Use question words and ask someone about themselves.",goal:"Ask two follow-up questions.",words:[
+  ["なに","nani","what","question word"],
+  ["どこ","doko","where","question word"],
+  ["いつ","itsu","when","question word"],
+  ["だれ","dare","who","question word"],
+  ["なんさい","nansai","how old","question phrase"],
+  ["なんで","nande","why / how come","question word"]
+ ],grammar:"Put か at the end to make many polite questions: がくせいですか？ (Are you a student?). In casual speech, rising intonation often does the job: がくせい？",example:["どこに すんでるの？","Doko ni sunderu no?","Where do you live? (casual)"]},
+ {id:4,title:"Talk about your day",tag:"Everyday life",desc:"Say what you do, like, eat, and study.",goal:"Describe your routine in 3 sentences.",words:[
+  ["たべる","taberu","to eat","verb"],
+  ["のむ","nomu","to drink","verb"],
+  ["いく","iku","to go","verb"],
+  ["べんきょうする","benkyou suru","to study","verb"],
+  ["すき","suki","liked / fond of","な-adjective / noun"],
+  ["きょう","kyou","today","time word"]
+ ],grammar:"For likes, say 「X が すき」 (X ga suki). Example: にほんごが すき。 (Nihongo ga suki. — I like Japanese.)",example:["きょう、にほんごを べんきょうする。","Kyou, nihongo o benkyou suru.","I'm studying Japanese today."]},
+ {id:5,title:"Make plans",tag:"Friends & invitations",desc:"Invite someone out and agree or politely decline.",goal:"Make a simple plan for a day off.",words:[
+  ["いっしょに","issho ni","together","adverb"],
+  ["あした","ashita","tomorrow","time word"],
+  ["えいが","eiga","movie","noun"],
+  ["いこう","ikou","let's go","volitional verb"],
+  ["いいね","ii ne","sounds good / nice","expression"],
+  ["ごめん","gomen","sorry (casual)","expression"]
+ ],grammar:"A friendly invitation is 「いっしょに いかない？」 (Issho ni ikanai? — Want to go together?). Literally it's a negative question, but it works as an invitation.",example:["あした、えいが みにいかない？","Ashita, eiga mi ni ikanai?","Want to go see a movie tomorrow?"]},
+ {id:6,title:"At a café",tag:"Practical Japanese",desc:"Order a drink, ask for something, and say thank you.",goal:"Order one item politely.",words:[
+  ["これ","kore","this","demonstrative pronoun"],
+  ["みず","mizu","water","noun"],
+  ["コーヒー","koohii","coffee","noun"],
+  ["ください","kudasai","please give me","request expression"],
+  ["おねがいします","onegaishimasu","please / I'd appreciate it","polite expression"],
+  ["いくら","ikura","how much","question word"]
+ ],grammar:"「X を ください」 is a useful polite way to order: コーヒーを ください。 (Koohii o kudasai. — A coffee, please.)",example:["みずを おねがいします。","Mizu o onegaishimasu.","Water, please."]},
+ {id:7,title:"When you don't understand",tag:"Conversation rescue",desc:"Ask people to repeat, slow down, or explain.",goal:"Keep a conversation going even when you get stuck.",words:[
+  ["もういちど","mou ichido","one more time","adverb phrase"],
+  ["ゆっくり","yukkuri","slowly","adverb"],
+  ["わかる","wakaru","to understand","verb"],
+  ["わからない","wakaranai","I don't understand","verb, negative"],
+  ["ちょっと","chotto","a little / um…","adverb"],
+  ["だいじょうぶ","daijoubu","okay / all right","な-adjective / expression"]
+ ],grammar:"A very useful phrase: 「もういちど おねがいします」 (Mou ichido onegaishimasu. — One more time, please.) You don't need perfect Japanese to communicate.",example:["もうすこし ゆっくり はなして。","Mou sukoshi yukkuri hanashite.","Speak a little more slowly. (casual)"]}
+];
+const plan = [
+ ["Day 1","Greetings","Learn こんにちは, おはよう, ありがとう. Say each aloud 5 times."],
+ ["Day 2","Check in","Practice げんき？ and うん、げんき. Record yourself once."],
+ ["Day 3","Introductions","Say your name and where you're from in 2 sentences."],
+ ["Day 4","Question practice","Ask 3 questions with どこ, なに, and だれ."],
+ ["Day 5","Likes","Make 3 sentences with X が すき."],
+ ["Day 6","Review day","Do flashcards and the quick quiz; repeat missed words."],
+ ["Day 7","Mini conversation","Perform the greeting and introduction dialogue without reading."],
+ ["Day 8","Daily routine","Use たべる, のむ, いく in simple sentences."],
+ ["Day 9","Time words","Talk about きょう and あした."],
+ ["Day 10","Make plans","Practice inviting a friend with いっしょに."],
+ ["Day 11","Accept / decline","Practice いいね and ごめん、きょうはちょっと…."],
+ ["Day 12","Café","Order a drink with を ください."],
+ ["Day 13","Repair phrases","Practice もういちど and ゆっくり."],
+ ["Day 14","Checkpoint","Complete a 1-minute self-introduction and café role-play."],
+ ["Day 15","Past experiences","Learn きのう (yesterday) and たべた (ate)."],
+ ["Day 16","Weekend chat","Talk about what you did and what you like."],
+ ["Day 17","Opinions","Use いいね, おもしろい, and たのしい."],
+ ["Day 18","Ask follow-ups","Respond, then ask one more question instead of stopping."],
+ ["Day 19","Getting around","Practice えき (station), ここ (here), and どこ."],
+ ["Day 20","Polite requests","Switch between casual and polite request phrases."],
+ ["Day 21","Checkpoint","Hold a 2-minute conversation with notes only."],
+ ["Day 22","Speak in chunks","Practice common phrases without translating word by word."],
+ ["Day 23","Conversation speed","Listen to your own recording and repeat more smoothly."],
+ ["Day 24","Talk about study","Explain what you study and why you like Japanese."],
+ ["Day 25","Real-life role-play","Café, introductions, or making plans without English prompts."],
+ ["Day 26","Weak-word review","Review the 10 words you miss most often."],
+ ["Day 27","Free conversation","Answer 5 prompts with 2 sentences each."],
+ ["Day 28","Final checkpoint","Have a 3-minute beginner conversation and note what to learn next."]
+];
+const vocab = lessons.flatMap(l => l.words.map(w=>({jp:w[0],reading:w[1],meaning:w[2],type:w[3],lesson:l.id})));
+const quizItems = [
+ {q:"A friend asks 「げんき？」. What are they asking?",opts:["Where do you live?","How are you?","What are you studying?"],a:1,why:"げんき？ is a casual “How are you?” or “You good?”"},
+ {q:"How do you say “I like Japanese”?",opts:["にほんごを ください","にほんごが すき","にほんごに いく"],a:1,why:"Use が with すき: にほんごが すき。"},
+ {q:"You didn't catch what someone said. What can you say?",opts:["もういちど おねがいします","いくらですか","おはよう"],a:0,why:"もういちど おねがいします means “One more time, please.”"},
+ {q:"Which is a casual “Want to go together?”",opts:["いっしょに いかない？","どこですか","なまえは？"],a:0,why:"いっしょに いかない？ is a natural casual invitation."},
+ {q:"At a café, how do you ask for water politely?",opts:["みずが だれ","みずを ください","みずに すき"],a:1,why:"みずを ください means “Water, please.”"},
+ {q:"What does あした mean?",opts:["Yesterday","Today","Tomorrow"],a:2,why:"あした (ashita) means tomorrow."},
+ {q:"Which word is a verb meaning “to study” when paired with する?",opts:["べんきょう","なまえ","ゆっくり"],a:0,why:"べんきょう is study; べんきょうする means to study."}
+];
+let state = {completed:[],known:[],quizDone:0,streak:0,view:"home",lesson:1,flashIndex:0,flashRevealed:false,quizIndex:0,quizScore:0,quizAnswered:false,conversationStep:0,planDone:[]};
+try { const saved=JSON.parse(localStorage.getItem("nihongoDailyState")||"null"); if(saved) state={...state,...saved}; } catch(e){}
+function save(){try{localStorage.setItem("nihongoDailyState",JSON.stringify(state));}catch(e){}}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function setView(v){state.view=v;save();render();}
+function lessonById(id){return lessons.find(l=>l.id===id)||lessons[0];}
+function renderNav(){document.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.view===state.view));document.getElementById("streak").textContent=state.streak||0;}
+function render(){
+ renderNav(); const main=document.getElementById("main");
+ if(state.view==="home") main.innerHTML=homeView();
+ if(state.view==="lesson") main.innerHTML=lessonView();
+ if(state.view==="flashcards") main.innerHTML=flashView();
+ if(state.view==="quiz") main.innerHTML=quizView();
+ if(state.view==="conversation") main.innerHTML=conversationView();
+ if(state.view==="plan") main.innerHTML=planView();
+ if(state.view==="vocab") main.innerHTML=vocabView();
+ bindView();
+}
+function homeView(){
+ const done=state.completed.length, pct=Math.round(done/lessons.length*100);
+ return `<div class="hero"><div><div class="eyebrow">Your daily practice · 45 minutes</div><h1>Speak a little.<br>Connect a lot.</h1><p class="muted">A practical Japanese routine for real conversations — greetings, introductions, everyday plans, cafés, and what to say when you get stuck.</p><div class="hero-actions"><button class="btn primary" data-go="lesson">Start today's lesson →</button><button class="btn" data-go="conversation">Practice a conversation</button></div></div><div class="hero-art"><div class="hero-jp">だいじょうぶ？</div><div class="hero-romaji">daijoubu? · Are you okay?</div><div style="margin-top:15px;font-size:13px">Your first goal: feel comfortable<br>starting a small conversation.</div></div></div>
+ <div class="stats"><div class="stat"><div class="num">${done}/${lessons.length}</div><div class="label">Lessons completed</div><div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div></div><div class="stat"><div class="num">${state.known.length}</div><div class="label">Words marked as known</div></div><div class="stat"><div class="num">${state.quizDone}</div><div class="label">Quiz attempts completed</div></div></div>
+ <div class="section-head"><div><div class="eyebrow">Your path</div><h2>Learn by doing</h2></div><span class="muted" style="font-size:12px">Beginner · conversation-first</span></div>
+ <div class="cards">${lessons.slice(0,4).map(l=>`<article class="lesson-card"><div class="lesson-top"><span class="pill">${l.tag}</span><span class="muted" style="font-size:12px">${state.completed.includes(l.id)?"✓ Completed":"15–20 min"}</span></div><h3>${l.id.toString().padStart(2,"0")} · ${l.title}</h3><p>${l.desc}</p><button class="btn small" data-lesson="${l.id}">${state.completed.includes(l.id)?"Review lesson":"Start lesson"} →</button></article>`).join("")}</div>
+ <div class="section-head"><div><div class="eyebrow">A simple routine</div><h2>45 minutes a day</h2></div></div><div class="panel"><div class="day-list"><div><strong>10 min · Recall</strong><div class="muted">Review yesterday's words before looking at answers; revisit tricky flashcards.</div></div><div><strong>15 min · Learn</strong><div class="muted">Study one useful pattern and 5–6 practical words, then build your own examples.</div></div><div><strong>15 min · Speak</strong><div class="muted">Say example sentences aloud, shadow the dialogue, and role-play a real situation.</div></div><div><strong>5 min · Check</strong><div class="muted">Take the quiz and note what to revisit tomorrow.</div></div></div></div>
+ <p class="footer-note">Progress is saved in this preview on this browser when local storage is available. Start with kana and romaji; add kanji gradually.</p>`;
+}
+function lessonView(){
+ const l=lessonById(state.lesson);
+ return `<div class="breadcrumb"><button class="btn small" data-go="home">← Dashboard</button><span>/</span><span>Lesson ${l.id} of ${lessons.length}</span></div><div class="panel"><div class="eyebrow">${l.tag} · 15–20 minutes</div><h1 style="font-size:32px">${l.title}</h1><p class="muted">${l.desc}</p><div class="example"><div class="eyebrow">Today's goal</div><strong>${l.goal}</strong></div><div class="section-head"><div><h2>Useful words</h2><p class="muted">Read the kana first; use romaji as a support.</p></div></div><div class="cards">${l.words.map((w,i)=>`<div class="lesson-card" style="min-height:135px"><div class="jp-big">${w[0]}</div><div class="romaji">${w[1]}</div><div style="font-weight:700;margin-top:5px">${w[2]}</div><span class="pill" style="margin-top:9px">${w[3]}</span></div>`).join("")}</div><div class="section-head"><div><h2>One useful pattern</h2></div></div><div class="example">${l.grammar}</div><div class="section-head"><div><h2>Say it in context</h2></div></div><div class="example"><div class="jp">${l.example[0]}</div><div class="romaji">${l.example[1]}</div><div class="en">${l.example[2]}</div></div><div class="lesson-controls"><button class="btn" data-prev="${Math.max(1,l.id-1)}" ${l.id===1?"disabled":""}>← Previous</button><button class="btn primary" data-complete="${l.id}">${state.completed.includes(l.id)?"Completed ✓":"Mark complete & continue"} →</button><button class="btn" data-next="${Math.min(lessons.length,l.id+1)}" ${l.id===lessons.length?"disabled":""}>Next lesson</button></div></div>`;
+}
+function flashView(){
+ const w=vocab[state.flashIndex%vocab.length]; const revealed=state.flashRevealed;
+ return `<div class="eyebrow">Active recall · 5–10 minutes</div><h1>Flashcards</h1><p class="muted">Try to remember the meaning before revealing it. Mark words you know to track your progress.</p><div class="flash-wrap"><div class="flashcard" id="flip"><div class="pill">${state.flashIndex+1} of ${vocab.length} · ${w.type}</div><div class="jp-big" style="margin-top:20px">${w.jp}</div>${revealed?`<div class="romaji">${w.reading}</div><div class="meaning">${w.meaning}</div>`:`<div class="tap">Tap card to reveal reading & meaning</div>`}</div><div class="flash-actions">${revealed?`<button class="btn" data-unknown>Still learning</button><button class="btn primary" data-known="${state.flashIndex}">I know this ✓</button>`:`<button class="btn primary" data-reveal>Reveal answer</button>`}<button class="btn" data-flashnext>Next card →</button></div></div><div class="section-head"><h2>Study tip</h2></div><div class="panel"><strong>Say the word out loud, then make a tiny sentence.</strong><p class="muted">For example: みずを ください。 — Mizu o kudasai. — Water, please.</p></div>`;
+}
+function quizView(){
+ const q=quizItems[state.quizIndex%quizItems.length];
+ return `<div class="eyebrow">Quick check · 3–5 minutes</div><h1>Conversation quiz</h1><p class="muted">Choose the most natural answer. Learn from each explanation.</p><div class="panel"><div class="lesson-top"><span class="pill">Question ${(state.quizIndex%quizItems.length)+1} of ${quizItems.length}</span><span class="muted">Score this round: ${state.quizScore}</span></div><div class="quiz-question">${q.q}</div><div class="options">${q.opts.map((o,i)=>`<button class="option" data-answer="${i}" ${state.quizAnswered?"disabled":""}>${String.fromCharCode(65+i)}. ${o}</button>`).join("")}</div><div id="feedback" class="feedback"></div><div class="lesson-controls"><button class="btn" data-resetquiz>Restart quiz</button><button class="btn primary" data-quiznext ${!state.quizAnswered?"disabled":""}>${state.quizIndex%quizItems.length===quizItems.length-1?"Finish round":"Next question"} →</button></div></div>`;
+}
+const dialogues=[
+ {who:"Friend",jp:"こんにちは！げんき？",rom:"Konnichiwa! Genki?",en:"Hey! How are you?",you:false},
+ {who:"You",jp:"うん、げんき！ありがとう。",rom:"Un, genki! Arigatou.",en:"Yeah, I'm good! Thanks.",you:true},
+ {who:"Friend",jp:"よかった！きょう、なにするの？",rom:"Yokatta! Kyou, nani suru no?",en:"Good! What are you doing today?",you:false},
+ {who:"You",jp:"にほんごを べんきょうする。",rom:"Nihongo o benkyou suru.",en:"I'm studying Japanese.",you:true},
+ {who:"Friend",jp:"いいね！いっしょに コーヒー のまない？",rom:"Ii ne! Issho ni koohii nomanai?",en:"Nice! Want to get coffee together?",you:false},
+ {who:"You",jp:"いいね！いこう！",rom:"Ii ne! Ikou!",en:"Sounds good! Let's go!",you:true}
+];
+function conversationView(){
+ return `<div class="eyebrow">Speak in context · 5–10 minutes</div><h1>Everyday conversation</h1><p class="muted">Read each line, say it aloud, and try to answer before revealing the translation. This dialogue uses casual Japanese between friends.</p><div class="panel"><div class="lesson-top"><span class="pill">Scenario 01 · Catching up with a friend</span><button class="btn small" data-resetdialogue>Start over</button></div><div class="dialogue">${dialogues.slice(0,state.conversationStep+1).map(d=>`<div class="bubble ${d.you?"you":""}"><div class="speaker">${d.who}</div><div class="jp">${d.jp}</div><div class="rom">${d.rom}</div><div class="translation">${d.en}</div></div>`).join("")}</div><div class="lesson-controls"><span class="muted" style="align-self:center">Line ${Math.min(state.conversationStep+1,dialogues.length)} of ${dialogues.length}</span><button class="btn primary" data-dialognext>${state.conversationStep>=dialogues.length-1?"Replay conversation":"Next line →"}</button></div></div><div class="section-head"><h2>Notice how people actually speak</h2></div><div class="panel"><p><strong>Casual speech:</strong> げんき？ is friendly and common with people you know.</p><p><strong>Sentence endings:</strong> の？ can make a casual question sound conversational. いっしょに のまない？ is an invitation, not simply a negative statement.</p><p><strong>Politeness:</strong> Use polite forms with strangers, staff, and in formal situations. This dialogue is between friends.</p></div>`;
+}
+function planView(){
+ return `<div class="eyebrow">Structured study · 4 weeks</div><h1>Your 28-day conversation plan</h1><p class="muted">Each day is designed for 45 minutes: 10 minutes of recall, 15 minutes learning, 15 minutes speaking, and a 5-minute check. Tick off the day when you've practiced.</p><div class="panel" style="margin-bottom:15px"><div style="display:flex;justify-content:space-between;gap:10px"><strong>${state.planDone.length} of 28 days completed</strong><span class="muted">${Math.round(state.planDone.length/28*100)}%</span></div><div class="progress-track"><div class="progress-fill" style="width:${state.planDone.length/28*100}%"></div></div></div><div class="day-list">${plan.map((d,i)=>`<div class="day"><div class="day-num">DAY ${i+1}</div><div><strong>${d[1]}</strong><small>${d[2]}</small></div><input class="check" type="checkbox" data-day="${i+1}" ${state.planDone.includes(i+1)?"checked":""} aria-label="Mark day ${i+1} complete"></div>`).join("")}</div><p class="footer-note">Weekly rhythm: 5 learning days, 1 review day, 1 speaking checkpoint. Repeat missed days rather than rushing ahead.</p>`;
+}
+function vocabView(){
+ return `<div class="eyebrow">Your word bank</div><h1>Vocabulary</h1><p class="muted">Search by Japanese, romaji, meaning, or word type. The word type is included so you can see how each word works.</p><input id="vocabSearch" class="search" placeholder="Search words, meanings, or types…" /><div class="panel" style="overflow-x:auto"><table class="vocab-table"><thead><tr><th>Japanese</th><th>Reading / meaning</th><th>Word type</th><th>Lesson</th></tr></thead><tbody id="vocabRows">${vocabRows(vocab)}</tbody></table></div>`;
+}
+function vocabRows(list){return list.map(w=>`<tr><td>${w.jp}</td><td><div>${w.reading}</div><div class="muted">${w.meaning}</div></td><td><span class="pill">${w.type}</span></td><td>${w.lesson}</td></tr>`).join("")||`<tr><td colspan="4" class="muted">No matching words.</td></tr>`;}
+function bindView(){
+ document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>setView(b.dataset.go));
+ document.querySelectorAll("[data-lesson]").forEach(b=>b.onclick=()=>{state.lesson=+b.dataset.lesson;setView("lesson");});
+ document.querySelectorAll("[data-prev],[data-next]").forEach(b=>b.onclick=()=>{state.lesson=+(b.dataset.prev||b.dataset.next);render();});
+ document.querySelectorAll("[data-complete]").forEach(b=>b.onclick=()=>{let id=+b.dataset.complete;if(!state.completed.includes(id))state.completed.push(id);state.streak=Math.max(1,state.streak);state.lesson=Math.min(lessons.length,id+1);save();render();});
+ const flip=document.getElementById("flip");if(flip)flip.onclick=()=>{state.flashRevealed=!state.flashRevealed;render();};
+ document.querySelectorAll("[data-reveal]").forEach(b=>b.onclick=()=>{state.flashRevealed=true;render();});
+ document.querySelectorAll("[data-flashnext],[data-known],[data-unknown]").forEach(b=>b.onclick=()=>{if(b.dataset.known!==undefined){let w=vocab[+b.dataset.known];let key=w.jp;if(!state.known.includes(key))state.known.push(key);}state.flashIndex=(state.flashIndex+1)%vocab.length;state.flashRevealed=false;save();render();});
+ document.querySelectorAll("[data-answer]").forEach(b=>b.onclick=()=>{if(state.quizAnswered)return;const q=quizItems[state.quizIndex%quizItems.length],pick=+b.dataset.answer;state.quizAnswered=true;if(pick===q.a)state.quizScore++;document.querySelectorAll("[data-answer]").forEach((x,i)=>{if(i===q.a)x.classList.add("correct");else if(i===pick)x.classList.add("wrong");});const f=document.getElementById("feedback");if(f)f.textContent=(pick===q.a?"Correct! ":"Not quite. ")+q.why;const n=document.querySelector("[data-quiznext]");if(n)n.disabled=false;});
+ document.querySelectorAll("[data-quiznext]").forEach(b=>b.onclick=()=>{if(state.quizIndex%quizItems.length===quizItems.length-1){state.quizDone++;state.quizIndex=0;state.quizScore=0;state.quizAnswered=false;save();setView("home");}else{state.quizIndex++;state.quizAnswered=false;save();render();}});
+ document.querySelectorAll("[data-resetquiz]").forEach(b=>b.onclick=()=>{state.quizIndex=0;state.quizScore=0;state.quizAnswered=false;render();});
+ document.querySelectorAll("[data-dialognext]").forEach(b=>b.onclick=()=>{state.conversationStep=state.conversationStep>=dialogues.length-1?0:state.conversationStep+1;render();});
+ document.querySelectorAll("[data-resetdialogue]").forEach(b=>b.onclick=()=>{state.conversationStep=0;render();});
+ document.querySelectorAll("[data-day]").forEach(b=>b.onchange=()=>{let n=+b.dataset.day;if(b.checked&&!state.planDone.includes(n))state.planDone.push(n);if(!b.checked)state.planDone=state.planDone.filter(x=>x!==n);save();render();});
+ const search=document.getElementById("vocabSearch");if(search)search.oninput=()=>{const q=search.value.toLowerCase();document.getElementById("vocabRows").innerHTML=vocabRows(vocab.filter(w=>[w.jp,w.reading,w.meaning,w.type].some(s=>s.toLowerCase().includes(q))));};
+}
+document.querySelectorAll(".navbtn").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.view)));
+render();
+</script>
+</body>
+</html>
