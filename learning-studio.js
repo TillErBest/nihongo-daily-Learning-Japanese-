@@ -23,7 +23,8 @@
   nav.type = "button";
   nav.dataset.learningStudio = "true";
   nav.innerHTML = '<span class="navicon">✦</span> Learning studio';
-  sidebar.insertBefore(nav, sidebar.firstChild);
+  const sideNote = sidebar.querySelector(".side-note");
+  sidebar.insertBefore(nav, sideNote || null);
 
   const phrases = [
     {jp:"きょうは なにを しますか？",rom:"Kyou wa nani o shimasu ka?",en:"What are you doing today?",answer:"きょうは にほんごを べんきょうします。",translation:"Today, I will study Japanese."},
