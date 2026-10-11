@@ -260,8 +260,6 @@ function render(){
  renderNav(); const main=document.getElementById("main");
  if(state.view==="home") main.innerHTML=homeView();
  if(state.view==="lesson") main.innerHTML=lessonView();
- if(state.view==="hiragana") main.innerHTML=kanaPracticeView("hiragana");
- if(state.view==="katakana") main.innerHTML=kanaPracticeView("katakana");
  if(state.view==="flashcards") main.innerHTML=flashView();
  if(state.view==="quiz") main.innerHTML=quizView();
  if(state.view==="conversation") main.innerHTML=conversationView();
