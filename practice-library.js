@@ -29,7 +29,7 @@
   const style = document.createElement("style");
   style.textContent = ".pl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.pl-cell{padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--text);text-align:left}.pl-cell.correct{border-color:#3b936b;background:var(--surface2)}.pl-cell.wrong{border-color:#c66c60;background:var(--surface2)}@media(max-width:600px){.pl-grid{grid-template-columns:1fr}}";
   document.head.appendChild(style);
-  function addNav(view,label,icon){const b=document.createElement("button");b.className="navbtn";b.dataset.view=view;b.dataset.practiceLibrary="true";b.innerHTML='<span class="navicon">'+icon+'</span> '+label;b.addEventListener("click",()=>open(view));const before=sidebar.querySelector('[data-view="kanji"]');sidebar.insertBefore(b,before||sidebar.firstChild);}
+  function addNav(view,label,icon){const b=document.createElement("button");b.className="navbtn";b.dataset.view=view;b.dataset.practiceLibrary="true";b.innerHTML='<span class="navicon">'+icon+'</span> '+label;b.addEventListener("click",()=>open(view));const note=sidebar.querySelector(".side-note");sidebar.insertBefore(b,note||null);}
   addNav("pl-vocab","Vocabulary library","あ");
   sidebar.querySelectorAll('[data-view="hiragana"],[data-view="katakana"]').forEach(b=>b.addEventListener("click",event=>{event.preventDefault();event.stopImmediatePropagation();open(b.dataset.view==="hiragana"?"pl-hiragana":"pl-katakana");},true));
   function open(view){sidebar.querySelectorAll(".navbtn").forEach(b=>b.classList.toggle("active",b.dataset.view===view));if(view==="pl-vocab")renderVocab();else renderKana(view==="pl-hiragana"?"h":"k");}
