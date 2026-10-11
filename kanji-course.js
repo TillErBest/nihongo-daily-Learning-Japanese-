@@ -63,7 +63,7 @@
     ["古","old (things)","ふる / furu(i)","古い","ふるい · furui","Furui eiga ga suki desu.","I like old movies."],
     ["多","many; much","おお / oo(i)","多い","おおい · ooi","Kono machi wa hito ga ooi desu.","There are many people in this town."],
     ["少","few; little","すく / suku(nai)","少し","すこし · sukoshi","Nihongo ga sukoshi wakarimasu.","I understand a little Japanese."]
-  ].map(([k,meaning,reading,word,wordReading,sentenceRom,translation])=>({k,meaning,reading,word,wordReading,sentenceRom,translation,sentence:sentenceRom.split(".")[0]}));
+  ].map(([k,meaning,reading,word,wordReading,sentenceRom,translation])=>({k,meaning,reading,word,wordReading,sentenceRom,translation,sentence:word}));
   const scheduleKey="nihongoKanjiCourseSchedule";
   const getMap=()=>{try{return JSON.parse(localStorage.getItem(scheduleKey)||"{}")}catch(e){return {}}};
   const putMap=m=>{try{localStorage.setItem(scheduleKey,JSON.stringify(m))}catch(e){}};
